@@ -7,11 +7,12 @@ using UnityEngine;
 
 public class MagicUnity : MonoBehaviour
 {
+    public Magic magic;
     // Start is called before the first frame update
     void Start()
     {
-        Magic magic = new Magic("pk_live_A88D2338EEECE1C9");
-        Magic.Instance = magic;
+        // magic = new Magic("pk_live_2C8DAF27FCBA05C9");
+        // Magic.Instance = magic;
     }
 
     // Update is called once per frame

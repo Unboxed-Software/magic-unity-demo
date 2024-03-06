@@ -3,7 +3,11 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Browser
+  - Windows_Browser
+  - win_web
+  - magic
   layers:
   - Default
   - TransparentFX

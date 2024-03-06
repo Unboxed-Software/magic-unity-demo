@@ -2,25 +2,41 @@ using System;
 using System.Collections.Generic;
 using link.magic.unity.sdk.Provider;
 using UnityEngine;
+using VoltstroStudios.UnityWebBrowser;
+using VoltstroStudios.UnityWebBrowser.Core;
+using WindowsHandler;
+
 
 namespace link.magic.unity.sdk.Relayer
 {
     public class WebviewController
     {
+        // Switch variable depending on OS
+#if !UNITY_EDITOR_WIN || !UNITY_STANDALONE_WIN
         private readonly WebViewObject _webViewObject;
-        private readonly Dictionary<int, Func<string, bool>> _messageHandlers = new();
+       
+#else
+        private GameObject windows_webView;
+        public BaseUwbClientManager clientmanager;
+        private WebBrowserClient webClient;
+#endif
+         private readonly Dictionary<int, Func<string, bool>> _messageHandlers = new();
+
 
         private readonly Queue<string> _queue = new();
         private bool _relayerLoaded;
         private bool _relayerReady;
 
+
+#if !UNITY_EDITOR_WIN || !UNITY_STANDALONE_WIN
         public WebviewController()
         {
             // instantiate webview 
             _webViewObject = new GameObject("WebViewObject").AddComponent<WebViewObject>();
             _webViewObject.Init(
                 cb: _cb,
-                ld: (msg) => {
+                ld: (msg) =>
+                {
                     _relayerLoaded = true;
                 },
                 httpErr: (msg) =>
@@ -33,18 +49,38 @@ namespace link.magic.unity.sdk.Relayer
                 }
             );
         }
+#else
+        public WebviewController()
+        {
+            clientmanager = GameObject.FindWithTag("Windows_Browser").GetComponent<BaseUwbClientManager>();
+            webClient = clientmanager.browserClient;
+            webClient.RegisterJsMethod<string>("_cb", _cb);
+            
+            // windows_webView = new GameObject("Windows_Webview");
+            // windows_webView.AddComponent<Windows_Handler>();
+            // windows_webView.tag = "win_web";
+
+            Debug.Log("launching Webview");
+        }
+#endif
 
         internal void Load(string url)
         {
+#if !UNITY_EDITOR_WIN || !UNITY_STANDALONE_WIN
             _webViewObject.LoadURL(url);
+#else
+            webClient.LoadUrl(url);
+#endif
         }
-        
+
 
         // callback js hooks
         private void _cb(string msg)
         {
             // Debug.Log($"MagicUnity Received Message from Relayer: {msg}");
-            // Do Simple Relayer JSON Deserialization just to fetch ids for handlers
+            // Do SimRle Relayer JSON Deserialization just to fetch ids for handlers
+
+            #if !UNITY_EDITOR_WIN || !UNITY_STANDALONE_WIN
             var res = JsonUtility.FromJson<RelayerResponse<object>>(msg);
             var msgType = res.msgType;
 
@@ -69,7 +105,11 @@ namespace link.magic.unity.sdk.Relayer
                     _handleResponse(msg, res);
                     break;
             }
+            #else
+            Debug.Log(msg);
+            #endif
         }
+
 
         /// <summary>
         ///     Queue
@@ -88,10 +128,12 @@ namespace link.magic.unity.sdk.Relayer
                 var message = _queue.Dequeue();
 
                 Debug.Log($"MagicUnity Send Message to Relayer: {message}");
-
+#if !UNITY_EDITOR_WIN || !UNITY_STANDALONE_WIN
                 _webViewObject.EvaluateJS(
                     $"window.dispatchEvent(new MessageEvent('message', {{ 'data': {message} }}));");
-
+#else
+                windows_webView.GetComponent<Windows_Handler>().launch($"window.dispatchEvent(new MessageEvent('message', {{ 'data': {message} }}));");
+#endif
                 _dequeue();
             }
         }

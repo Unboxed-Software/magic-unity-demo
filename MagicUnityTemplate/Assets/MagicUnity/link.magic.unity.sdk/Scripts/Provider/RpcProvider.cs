@@ -16,6 +16,7 @@ namespace link.magic.unity.sdk.Provider
         private readonly JsonSerializerSettings _jsonSerializerSettings =
             DefaultJsonSerializerSettingsFactory.BuildDefaultJsonSerializerSettings();
 
+        //Webviewer
         private readonly WebviewController _relayer = new();
 
         protected internal RpcProvider(UrlBuilder urlBuilder)
@@ -23,9 +24,10 @@ namespace link.magic.unity.sdk.Provider
             var url = _generateBoxUrl(urlBuilder);
 
             // init relayer
-            _relayer.Load(url);
+            // _relayer.Load(url);
         }
 
+        //WHERE THE JS GETS BUILT
         private string _generateBoxUrl(UrlBuilder urlBuilder)
         {
             // encode options params to base 64
@@ -33,6 +35,7 @@ namespace link.magic.unity.sdk.Provider
             Debug.Log(optionsJsonString);
 
             var url = $"{UrlBuilder.Host}/send/?params={urlBuilder.EncodedParams}";
+            Debug.Log(url);
 
             return url;
         }
