@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 9cbe8523dcc2b4dae97c69b1ead4c507
+guid: 60e7bf38137eb4950b2f02b7d57c1ad3
 folderAsset: yes
 PluginImporter:
   serializedVersion: 1
@@ -38,7 +38,8 @@ PluginImporter:
         CPU: AnyCPU
     OSXUniversal:
       enabled: 1
-      settings: {}
+      settings:
+        CPU: AnyCPU
     Win:
       enabled: 0
       settings:

@@ -20,7 +20,8 @@ namespace link.magic.unity.sdk.Relayer
             _webViewObject = new GameObject("WebViewObject").AddComponent<WebViewObject>();
             _webViewObject.Init(
                 cb: _cb,
-                ld: (msg) => {
+                ld: (msg) =>
+                {
                     _relayerLoaded = true;
                 },
                 httpErr: (msg) =>
@@ -38,12 +39,12 @@ namespace link.magic.unity.sdk.Relayer
         {
             _webViewObject.LoadURL(url);
         }
-        
+
 
         // callback js hooks
         private void _cb(string msg)
         {
-            // Debug.Log($"MagicUnity Received Message from Relayer: {msg}");
+            Debug.Log($"MagicUnity Received Message from Relayer: {msg}");
             // Do Simple Relayer JSON Deserialization just to fetch ids for handlers
             var res = JsonUtility.FromJson<RelayerResponse<object>>(msg);
             var msgType = res.msgType;
