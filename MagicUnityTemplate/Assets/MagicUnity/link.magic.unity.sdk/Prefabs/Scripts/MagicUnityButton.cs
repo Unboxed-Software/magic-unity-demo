@@ -22,17 +22,18 @@ public class MagicUnityButton : MonoBehaviour
     public async void Login()
     {
         Debug.Log("logging in...");
-        Magic magic = new Magic("pk_live_A88D2338EEECE1C9");
+        Magic magic = Magic.Instance;
         Debug.Log(magic);
         var token = await magic.Auth.LoginWithEmailOtp("jamesrp13@gmail.com");
-        // result.text = $"token {token}";
-        // Debug.Log("token: " + token);
+        Debug.Log("token: " + token);
+        result.text = $"token {token}";
     }
 
     public async void GetMetadata()
     {
         Magic magic = Magic.Instance;
         var metadata = await magic.User.GetMetadata();
+        Debug.Log($"Metadata Email: {metadata.email} \n Public Address: {metadata.publicAddress}");
         result.text = $"Metadata Email: {metadata.email} \n Public Address: {metadata.publicAddress}";
     }
 
@@ -40,6 +41,7 @@ public class MagicUnityButton : MonoBehaviour
     {
         Magic magic = Magic.Instance;
         var isLogout = await magic.User.Logout();
+        Debug.Log($"Logout: {isLogout.ToString()}");
         result.text = $"Logout: {isLogout.ToString()}";
     }
 }
